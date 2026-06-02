@@ -1,1 +1,44 @@
+print("Hello world!")
+local Players = game:GetService("Players")
 
+local function toR6(player)
+	player.CharacterAppearanceLoaded:Connect(function(character)
+		local humanoid = character:FindFirstChildOfClass("Humanoid")
+		if not humanoid or humanoid.RigType == Enum.HumanoidRigType.R6 then return end
+
+		local desc = Players:GetHumanoidDescriptionFromUserId(player.UserId)
+		desc.ClimbAnimation = ""
+		desc.FallAnimation = ""
+		desc.IdleAnimation = ""
+		desc.JumpAnimation = ""
+		desc.RunAnimation = ""
+		desc.SwimAnimation = ""
+		desc.WalkAnimation = ""
+
+		local r6 = Players:CreateHumanoidModelFromDescription(desc, Enum.HumanoidRigType.R6)
+		r6.Name = player.Name
+
+		if character.PrimaryPart and r6.PrimaryPart then
+			r6:SetPrimaryPartCFrame(character.PrimaryPart.CFrame)
+		end
+
+		player.Character = r6
+		r6.Parent = workspace
+	end)
+
+	local desc = Players:GetHumanoidDescriptionFromUserId(player.UserId)
+	desc.ClimbAnimation = ""
+	desc.FallAnimation = ""
+	desc.IdleAnimation = ""
+	desc.JumpAnimation = ""
+	desc.RunAnimation = ""
+	desc.SwimAnimation = ""
+	desc.WalkAnimation = ""
+	player:LoadCharacterWithHumanoidDescription(desc, Enum.HumanoidRigType.R6)
+end
+
+Players.PlayerAdded:Connect(toR6)
+
+for _, p in ipairs(Players:GetPlayers()) do
+	toR6(p)
+end
